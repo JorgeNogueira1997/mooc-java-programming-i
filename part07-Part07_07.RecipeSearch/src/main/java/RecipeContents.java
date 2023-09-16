@@ -21,6 +21,18 @@ public class RecipeContents {
         this.recipeIngredients = new ArrayList<>();
     }
     
+    public String getRecipeName(){
+        return this.recipeName;
+    }
+    
+    public int getRecipeCookingTime(){
+        return this.recipeCookingTime;
+    } 
+    
+    public ArrayList<String> getRecipeIngredients(){
+        return this.recipeIngredients;
+    }
+    
     public void setRecipeName(String name){
         this.recipeName = name;
     }

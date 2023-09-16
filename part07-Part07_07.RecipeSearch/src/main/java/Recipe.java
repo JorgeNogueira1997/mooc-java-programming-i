@@ -20,45 +20,105 @@ public class Recipe {
 
     public Recipe() {
         this.fileContent = new ArrayList<>();
+        this.recipeContents = new ArrayList<>();
         this.currentRecipeBeingRead = null;
     }
 
     public void list(String fileName) {
 
-        try ( Scanner scannerForFile = new Scanner(Paths.get(fileName))) {
+        try ( Scanner x = new Scanner(Paths.get(fileName))) {
+            while (x.hasNextLine()) {
+                //String aux = x.nextLine();
+                //this.recipeContents.add(aux);
+                //System.out.println(aux);
 
-            while (scannerForFile.hasNextLine()) {
-                this.fileContent.add(scannerForFile.nextLine());
-                String aux = scannerForFile.nextLine();
+                // objeto para cada receita nova a ser lida
+                RecipeContents recipe = new RecipeContents();
 
-                if (aux.isEmpty()) { // novo ingrediente depois da linha vazia
+                // ler nome da receita
+                String recipeName = x.nextLine();
+                if (recipeName.isEmpty()) { // ignora linha em branco
+                    continue;
+                }
+                recipe.setRecipeName(recipeName);
 
-                } else { // a linha não está vazia significa ler o nome
+                // ler tempo de cozedura
+                String cookingTimeStr = x.nextLine();
+                int cookingTime = Integer.valueOf(cookingTimeStr);
+                recipe.setRecipeCookingTime(cookingTime);
 
-                    if (this.currentRecipeBeingRead == null) {
-                        this.currentRecipeBeingRead = new RecipeContents();
-                        this.currentRecipeBeingRead.setRecipeName(aux);
-                    }else {
-                        int auxCookingTime = Integer.valueOf(aux);
-                        this.currentRecipeBeingRead.setRecipeCookingTime(auxCookingTime);
+                // ler ingredientes
+                while (x.hasNextLine()) {
+                    String ingredient = x.nextLine();
+                    if (ingredient.isEmpty()) {
+                        break; // End of ingredients for this recipe
                     }
-
+                    recipe.setRecipeIngredients(ingredient);
                 }
 
-                System.out.println(aux);
+                // adiciona o objeto ao array
+                this.recipeContents.add(recipe);
+
             }
-            // primeira linha: nome
-            // segunda linha: tempo cozedura
-            // terceira linha até encontrar espaço: ingredientes
 
-            // depois do espaço, começa outra receita...
-            System.out.println("Recipes: ");
-            String recipeName;
-            int recipeCookingTime;
-            // ingredients
-
+            //printRecipes();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
+        }
+
+    }
+
+    public void printRecipes() {
+        System.out.println("Recipes:");
+        for (RecipeContents recipe : this.recipeContents) {
+            System.out.println(recipe.getRecipeName()
+                    + ", cooking time: " + recipe.getRecipeCookingTime());
+            /*
+            System.out.println(recipe.getRecipeName() + 
+                    ", cooking time: " + recipe.getRecipeCookingTime() + 
+                    ", " + recipe.getRecipeIngredients()); */
+        }
+    }
+
+    public void findName(String userInput) {
+        for (int i = 0; i < this.recipeContents.size(); i++) {
+            RecipeContents recipeName = this.recipeContents.get(i);
+
+            //System.out.println("recipeName.getRecipeName(): " + recipeName.getRecipeName());
+            if (recipeName.getRecipeName().contains(userInput)) {
+                System.out.println("");
+                System.out.println("Recipes:");
+                System.out.println(recipeName.getRecipeName()
+                        + ", cooking time: " + recipeName.getRecipeCookingTime());
+            }
+        }
+    }
+
+    public void findMaxCookingTime(int maxCookingTime) {
+        System.out.println("");
+        System.out.println("Recipes:");
+        for (int i = 0; i < this.recipeContents.size(); i++) {
+            RecipeContents auxTime = this.recipeContents.get(i);
+
+            if (auxTime.getRecipeCookingTime() <= maxCookingTime) {
+                System.out.println(auxTime.getRecipeName()
+                        + ", cooking time: " + auxTime.getRecipeCookingTime());
+            }
+        }
+    }
+
+    public void findIngredient(String userIngredient) {
+        System.out.println("");
+        System.out.println("Recipes: ");
+
+        for (int i = 0; i < this.recipeContents.size(); i++) {
+            RecipeContents auxIngredient = this.recipeContents.get(i);
+
+            if (auxIngredient.getRecipeIngredients().contains(userIngredient)) {
+                System.out.println(auxIngredient.getRecipeName()
+                        + ", cooking time: " + auxIngredient.getRecipeCookingTime());
+            }
+
         }
 
     }
